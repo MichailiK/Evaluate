@@ -51,7 +51,7 @@ There are also a few non-constant Bindings:
 - [`java.lang.Object`](https://docs.oracle.com/javase/7/docs/api/java/lang/Object.html) lastresult
   - Contains the return value of the last evaluation made by the CommandSender. It is null if there was no return value
     in the last evaluation.
-- [`java.lang.Throwable`](https://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html)) lastexception
+- [`java.lang.Throwable`](https://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html) lastexception
   - Contains the last exception that has occurred during evaluation made by the CommandSender. It is null if no
     exceptions have been caught while evaluating.
 
