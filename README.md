@@ -7,6 +7,8 @@ Evaluate allows you to evaluate Nashorn script on a Minecraft Spigot server.
 
 **Evaluate is currently in early development. Expect bugs or exploits.**
 
+**Evaluate requires Java 11 or above.**
+
 **This plugin allows arbitrary code execution. Although there are security features (such as whitelisting),
 it may still be dangerous having Evaluate active. This plugin is recommended to be run on a local server for tinkering
 with the Bukkit API.**
