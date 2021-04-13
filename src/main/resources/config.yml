@@ -1,0 +1,32 @@
+# Evaluate configuration
+
+# Master switch. Fully enables or disables this plugin.
+enabled: false
+
+# Allow evaluation for command blocks, not recommended
+allow-command-blocks: false
+
+# Allow evaluation from console
+allow-console: true
+
+
+# In addition to requiring evaluate.use permissions, you may want to also set up a whitelist.
+# When having multiple whitelists enabled (both players & ips are enabled), then all conditions MUST be met.
+#
+# That means, if player & ip whitelists are enabled, you must be both a whitelisted player & a whitelisted IP address.
+whitelists:
+
+  # Player whitelists only accepts UUIDs. There are plenty of tools that can find your UUID, such as https://mcuuid.net/
+  player:
+    enabled: true
+    players:
+      - 069a79f4-44e9-4726-a5be-fca90e38aaf5 # Notch
+      - 1e18d5ff-643d-45c8-b509-43b8461d8614 # deadmau5
+      - 61699b2e-d327-4a01-9f1e-0ea8c3f06bc6 # Dinnerbone
+
+  # IP whitelists accepts IPv4 & IPv6 addresses & subnet masks.
+  ip:
+    enabled: true
+    ips:
+      - 127.0.0.1
+      - 192.168.0.0/16

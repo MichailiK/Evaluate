@@ -1,0 +1,26 @@
+name: Evaluate
+version: ${project.version}
+main: io.github.michailik.evaluate.Evaluate
+authors: [ MichailiK ]
+description: Allows evaluation of Nashorn code in Bukkit
+website: https://github.com/MichailiK/Evaluate
+default-permission: op
+api-version: 1.13
+
+commands:
+  evaluate:
+    description: Evaluates Nashorn code
+    aliases: [ eval ]
+    permission: evaluate.use
+    usage: /evaluate <nashorn code>
+
+  evaluateasynchronous:
+    description: Evaluates Nashorn code outside the server thread.
+    aliases: [ evaluateasync, evalasync, evala ]
+    permission: evaluate.use
+    usage: /evaluateasynchronous <nashorn code>
+
+permissions:
+  evaluate.use:
+    description: Allows evaluation of Nashorn code
+    default: op
