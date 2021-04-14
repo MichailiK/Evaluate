@@ -24,6 +24,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 abstract class BaseEvaluateCommand implements CommandExecutor, TabCompleter
 {
@@ -69,12 +70,27 @@ abstract class BaseEvaluateCommand implements CommandExecutor, TabCompleter
             return true;
         }
 
-        eval(sender, cache, String.join(" ", args));
+        eval(sender, cache, String.join(" ", args), x -> callback(sender, x));
 
         return true;
     }
 
-    protected abstract void eval(CommandSender sender, ScriptEngineCache.SenderCache cache, String content);
+    private void callback(CommandSender sender, Object object)
+    {
+        if(object instanceof Throwable)
+        {
+            sender.sendMessage("§c§lAn exception was thrown:§r§c\n"+object);
+        }
+        else
+        {
+            sender.sendMessage(
+                    "§a§lEvaluated successfully§r§a"+(object == null ? "" : " (§n"+object.getClass().getName()+"§r§a)")
+                            +"\n"+(object == null ? "§onull" : object.toString())
+            );
+        }
+    }
+
+    protected abstract void eval(CommandSender sender, ScriptEngineCache.SenderCache cache, String content, Consumer<Object> callback);
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)

@@ -99,7 +99,7 @@ class ScriptEngineCache implements Listener
             this.sender = sender;
         }
 
-        public void eval(String content)
+        public Object eval(String content) throws Exception
         {
             engine.put("lastresult", lastResult);
             engine.put("lastexception", lastException);
@@ -107,16 +107,13 @@ class ScriptEngineCache implements Listener
             try
             {
                 Object result = engine.eval(content);
-                sender.sendMessage(
-                        "§a§lEvaluated successfully§r§a"+(result == null ? "" : " (§n"+result.getClass().getName()+"§r§a)")
-                        +"\n"+(result == null ? "§onull" : result.toString())
-                );
                 lastResult = result;
+                return result;
             }
             catch(Exception e)
             {
-                sender.sendMessage("§c§lAn exception was thrown:§r§c\n"+e);
                 lastException = e;
+                throw e;
             }
         }
 

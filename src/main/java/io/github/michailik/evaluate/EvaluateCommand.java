@@ -18,6 +18,7 @@
 package io.github.michailik.evaluate;
 
 import org.bukkit.command.CommandSender;
+import java.util.function.Consumer;
 
 public class EvaluateCommand extends BaseEvaluateCommand
 {
@@ -27,8 +28,15 @@ public class EvaluateCommand extends BaseEvaluateCommand
     }
 
     @Override
-    protected void eval(CommandSender sender, ScriptEngineCache.SenderCache cache, String content)
+    protected void eval(CommandSender sender, ScriptEngineCache.SenderCache cache, String content, Consumer<Object> callback)
     {
-        cache.eval(content);
+        try
+        {
+            callback.accept(cache.eval(content));
+        }
+        catch(Exception e)
+        {
+            callback.accept(e);
+        }
     }
 }
