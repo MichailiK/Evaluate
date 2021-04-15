@@ -33,7 +33,7 @@ security:
       - 192.168.0.0/16
 
   # Class/Packages filter, which makes classes or packages (& the classes in them) inaccessible.
-  classfilter:
+  class-filter:
     enabled: true
     # True if the list should be a whitelist, false if the list should be a blacklist
     whitelist: true

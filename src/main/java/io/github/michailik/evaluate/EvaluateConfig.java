@@ -84,10 +84,10 @@ class EvaluateConfig
                     .collect(Collectors.toList()))
                 : Collections.emptyList();
 
-        security_classfilter_enabled = section.getBoolean("security.classfilter.enabled");
-        security_classfilter_whitelist = section.getBoolean("security.classfilter.whitelist");
+        security_classfilter_enabled = section.getBoolean("security.class-filter.enabled");
+        security_classfilter_whitelist = section.getBoolean("security.class-filter.whitelist");
         security_classfilter_filters = security_classfilter_enabled
-                ? Collections.unmodifiableCollection(section.getStringList("security.classfilter.filter"))
+                ? Collections.unmodifiableCollection(section.getStringList("security.class-filter.filter"))
                 : Collections.emptyList();
 
     }
