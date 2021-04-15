@@ -2,7 +2,7 @@
 
 Evaluate allows you to evaluate Nashorn script on a Minecraft Spigot server.
 
-![Preview](https://i.imgur.com/HceSr34.gif)
+![Preview](https://i.imgur.com/wEMoR31.gif)
 
 ## Before you continue ...
 
@@ -37,8 +37,8 @@ These features are currently available or planned:
   (for each CommandSender)
 - [x] Deny evaluation for Console or Command blocks
 - [x] Config reload
+- [x] Basic code completion
 - [ ] Easy access of JavaPlugin instances from other plugins
-- [ ] Basic code completion
 
 ## Bindings
 
