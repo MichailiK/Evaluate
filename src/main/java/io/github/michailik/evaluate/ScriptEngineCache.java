@@ -44,6 +44,10 @@ class ScriptEngineCache implements Listener
         this.plugin = plugin;
         this.filter = filter;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
+        // Getting a script engine the first time takes a while
+        plugin.getLogger().info("Initializing Nashorn engine");
+        factory.getScriptEngine();
     }
 
     public SenderCache getSenderCache(CommandSender sender)
