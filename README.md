@@ -2,6 +2,7 @@
 
 Evaluate allows you to evaluate Nashorn script on a Minecraft Spigot server.
 
+![Preview](https://i.imgur.com/HceSr34.gif)
 
 ## Before you continue ...
 
