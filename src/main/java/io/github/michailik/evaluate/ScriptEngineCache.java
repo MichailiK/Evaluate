@@ -81,20 +81,6 @@ public class ScriptEngineCache implements Listener
 
     public static class SenderCache
     {
-
-        // Group 1 = Name/Identifier
-        // Group 2 (if applicable) = method or array content
-        //
-        // Example: player.getWorld();
-        // Match 1:
-        //   - Group 1: player
-        //   - Group 2: *empty*
-        // Match 2:
-        //   - Group 1: getWorld
-        //   - Group 2: ()
-        // TODO use this for basic code completion
-        private static final Pattern pattern = Pattern.compile("([^.;()\\[\\]]+)(\\(.*\\)|\\[[0-9]+])?\\.?");
-
         private final ScriptEngine engine;
         private final CommandSender sender;
 

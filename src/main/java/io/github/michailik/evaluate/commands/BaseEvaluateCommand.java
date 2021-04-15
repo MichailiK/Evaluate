@@ -19,6 +19,7 @@ package io.github.michailik.evaluate.commands;
 
 import io.github.michailik.evaluate.EvaluateConfig;
 import io.github.michailik.evaluate.ScriptEngineCache;
+import io.github.michailik.evaluate.utils.CodeCompletion;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -103,6 +104,8 @@ abstract class BaseEvaluateCommand implements CommandExecutor, TabCompleter
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
     {
         // TODO
+        if(config.canEvaluate(sender) == null)
+            return CodeCompletion.autoComplete(String.join(" ", args), cache.getSenderCache(sender).getScriptEngine());
         return null;
     }
 }
