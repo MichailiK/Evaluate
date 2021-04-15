@@ -36,7 +36,7 @@ These features are currently available or planned:
 - [x] Return value of the last evaluation being exposed as `lastresult` & last exception as `lastexception` 
   (for each CommandSender)
 - [x] Deny evaluation for Console or Command blocks
-- [x] Automatic config reload
+- [x] Config reload
 - [ ] Easy access of JavaPlugin instances from other plugins
 - [ ] Basic code completion
 
