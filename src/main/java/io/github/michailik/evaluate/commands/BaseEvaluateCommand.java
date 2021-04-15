@@ -31,11 +31,16 @@ import java.util.function.Consumer;
 abstract class BaseEvaluateCommand implements CommandExecutor, TabCompleter
 {
     private final ScriptEngineCache cache;
-    private final EvaluateConfig config;
+    private EvaluateConfig config;
 
     public BaseEvaluateCommand(ScriptEngineCache cache, EvaluateConfig config)
     {
         this.cache = cache;
+        this.config = config;
+    }
+
+    public void setConfig(EvaluateConfig config)
+    {
         this.config = config;
     }
 

@@ -31,16 +31,16 @@ public class EvaluateClassFilter implements ClassFilter
 
     public EvaluateClassFilter(EvaluateConfig config)
     {
-        createMatchers(config);
-        isWhitelist = config.security_classfilter_whitelist;
+        readConfig(config);
     }
 
-    private void createMatchers(EvaluateConfig config)
+    public void readConfig(EvaluateConfig config)
     {
         patterns = config.security_classfilter_filters
                 .stream()
                 .map(x -> Pattern.compile(Glob.convertGlobToRegex(x), Pattern.CASE_INSENSITIVE))
                 .collect(Collectors.toList());
+        isWhitelist = config.security_classfilter_whitelist;
     }
 
     @Override

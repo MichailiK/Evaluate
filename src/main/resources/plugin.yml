@@ -20,7 +20,17 @@ commands:
     permission: evaluate.use
     usage: /evaluateasynchronous <nashorn code>
 
+  evaluatereload:
+    description: Reloads the Evaluate configuration file
+    aliases: [ evalreload ]
+    permission: evaluate.reload
+    usage: /evalreload
+
 permissions:
   evaluate.use:
     description: Allows evaluation of Nashorn code
+    default: op
+
+  evaluate.reload:
+    description: Allows using the evaluatereload command
     default: op

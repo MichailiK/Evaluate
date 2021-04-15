@@ -19,6 +19,7 @@ package io.github.michailik.evaluate;
 
 import io.github.michailik.evaluate.commands.AsyncEvaluateCommand;
 import io.github.michailik.evaluate.commands.EvaluateCommand;
+import io.github.michailik.evaluate.commands.EvaluateReloadCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Evaluate extends JavaPlugin
@@ -28,18 +29,39 @@ public final class Evaluate extends JavaPlugin
     private EvaluateConfig config;
     private EvaluateClassFilter filter;
 
+    private EvaluateCommand evaluateCommand;
+    private AsyncEvaluateCommand asyncEvaluateCommand;
+    private EvaluateReloadCommand evaluateReloadCommand;
+
     @Override
     public void onEnable()
     {
         saveDefaultConfig();
-
         config = new EvaluateConfig(getConfig());
         filter = new EvaluateClassFilter(config);
         cache = new ScriptEngineCache(this, filter);
 
+        evaluateCommand = new EvaluateCommand(cache, config);
+        asyncEvaluateCommand = new AsyncEvaluateCommand(cache, config);
+        evaluateReloadCommand = new EvaluateReloadCommand(this);
 
-        getCommand("evaluate").setExecutor(new EvaluateCommand(cache, config));
-        getCommand("evaluateasynchronous").setExecutor(new AsyncEvaluateCommand(cache, config));
+
+        getCommand("evaluate").setExecutor(evaluateCommand);
+        getCommand("evaluateasynchronous").setExecutor(asyncEvaluateCommand);
+        getCommand("evaluatereload").setExecutor(evaluateReloadCommand);
+    }
+
+    public void refetchConfig()
+    {
+        reloadConfig();
+
+        EvaluateConfig result = new EvaluateConfig(getConfig());
+
+        evaluateCommand.setConfig(result);
+        asyncEvaluateCommand.setConfig(result);
+        filter.readConfig(result);
+
+        config = result;
     }
 
     @Override
