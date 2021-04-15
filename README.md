@@ -24,7 +24,7 @@ protect your server from malicious code:
 - [x] Player whitelist (UUID)
 - [x] IP address & subnet mask whitelist
 - [x] Deny usage from command blocks or from console.
-- [ ] Class filtering
+- [x] Class filtering
 
 
 ## Features
@@ -35,8 +35,7 @@ These features are currently available or planned:
 - [x] Return value of the last evaluation being exposed as `lastresult` & last exception as `lastexception` 
   (for each CommandSender)
 - [x] Deny evaluation for Console or Command blocks
-- [ ] Automatic config reload
-- [ ] Last 10 snippets for tab completion
+- [x] Automatic config reload
 - [ ] Easy access of JavaPlugin instances from other plugins
 - [ ] Basic code completion
 
@@ -77,11 +76,12 @@ allow-command-blocks: false
 allow-console: true
 
 
-# In addition to requiring evaluate.use permissions, you may want to also set up a whitelist.
-# When having multiple whitelists enabled (both players & ips are enabled), then all conditions MUST be met.
+# In addition to requiring evaluate.use permissions, you may want to also set up additional security features to protect
+# your server from malicious code.
 #
+# When having both player & IP whitelists enabled, then both conditions MUST be met.
 # That means, if player & ip whitelists are enabled, you must be both a whitelisted player & a whitelisted IP address.
-whitelists:
+security:
 
   # Player whitelists only accepts UUIDs. There are plenty of tools that can find your UUID, such as https://mcuuid.net/
   player:
@@ -97,5 +97,16 @@ whitelists:
     ips:
       - 127.0.0.1
       - 192.168.0.0/16
+
+  # Class/Packages filter, which makes classes or packages (& the classes in them) inaccessible.
+  class-filter:
+    enabled: true
+    # True if the list should be a whitelist, false if the list should be a blacklist
+    whitelist: true
+    filter:
+      - org.bukkit
+      - org.bukkit.*
+      - org.spigotmc
+      - org.spigotmc.*
 
 ```
