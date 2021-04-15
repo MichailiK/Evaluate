@@ -24,14 +24,17 @@ public final class Evaluate extends JavaPlugin
 
     private ScriptEngineCache cache;
     private EvaluateConfig config;
+    private EvaluateClassFilter filter;
 
     @Override
     public void onEnable()
     {
         saveDefaultConfig();
 
-        cache = new ScriptEngineCache(this);
         config = new EvaluateConfig(getConfig());
+        filter = new EvaluateClassFilter(config);
+        cache = new ScriptEngineCache(this, filter);
+
 
         getCommand("evaluate").setExecutor(new EvaluateCommand(cache, config));
         getCommand("evaluateasynchronous").setExecutor(new AsyncEvaluateCommand(cache, config));

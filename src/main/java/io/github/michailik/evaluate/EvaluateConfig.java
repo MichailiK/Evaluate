@@ -34,11 +34,15 @@ class EvaluateConfig
     public final boolean allowCommandBlocks;
     public final boolean allowConsole;
 
-    public final boolean whitelists_player_enabled;
-    public final Collection<UUID> whitelists_player_players;
+    public final boolean security_player_enabled;
+    public final Collection<UUID> security_player_players;
 
-    public final boolean whitelists_ip_enabled;
-    public final Collection<IPAddressString> whitelists_ip_ips;
+    public final boolean security_ip_enabled;
+    public final Collection<IPAddressString> security_ip_ips;
+
+    public final boolean security_classfilter_enabled;
+    public final boolean security_classfilter_whitelist;
+    public final Collection<String> security_classfilter_filters;
 
     public EvaluateConfig(ConfigurationSection section)
     {
@@ -49,47 +53,43 @@ class EvaluateConfig
             allowCommandBlocks = false;
             allowConsole = false;
 
-            whitelists_player_enabled = false;
-            whitelists_player_players = Collections.emptyList();
+            security_player_enabled = false;
+            security_player_players = Collections.emptyList();
 
-            whitelists_ip_enabled = false;
-            whitelists_ip_ips = Collections.emptyList();
+            security_ip_enabled = false;
+            security_ip_ips = Collections.emptyList();
+
+            security_classfilter_enabled = false;
+            security_classfilter_whitelist = false;
+            security_classfilter_filters = Collections.emptyList();
             return;
         }
 
         allowCommandBlocks = section.getBoolean("allow-command-blocks");
         allowConsole = section.getBoolean("allow-console");
 
-        whitelists_player_enabled = section.getBoolean("whitelists.player.enabled");
-        whitelists_player_players = whitelists_player_enabled
-                ? Collections.unmodifiableCollection(section.getStringList("whitelists.player.players")
+        security_player_enabled = section.getBoolean("security.player.enabled");
+        security_player_players = security_player_enabled
+                ? Collections.unmodifiableCollection(section.getStringList("security.player.players")
                     .stream()
                     .map(UUID::fromString)
                     .collect(Collectors.toList()))
                 : Collections.emptyList();
 
-        whitelists_ip_enabled = section.getBoolean("whitelists.ip.enabled");
-        whitelists_ip_ips = whitelists_ip_enabled
-                ? Collections.unmodifiableCollection(section.getStringList("whitelists.ip.ips")
+        security_ip_enabled = section.getBoolean("security.ip.enabled");
+        security_ip_ips = security_ip_enabled
+                ? Collections.unmodifiableCollection(section.getStringList("security.ip.ips")
                     .stream()
                     .map(IPAddressString::new)
                     .collect(Collectors.toList()))
                 : Collections.emptyList();
 
-    }
+        security_classfilter_enabled = section.getBoolean("security.classfilter.enabled");
+        security_classfilter_whitelist = section.getBoolean("security.classfilter.whitelist");
+        security_classfilter_filters = security_classfilter_enabled
+                ? Collections.unmodifiableCollection(section.getStringList("security.classfilter.filter"))
+                : Collections.emptyList();
 
-    public EvaluateConfig()
-    {
-        enabled = false;
-
-        allowCommandBlocks = false;
-        allowConsole = false;
-
-        whitelists_player_enabled = false;
-        whitelists_player_players = Collections.emptyList();
-
-        whitelists_ip_enabled = false;
-        whitelists_ip_ips = Collections.emptyList();
     }
 
     public String canEvaluate(CommandSender sender)
@@ -115,17 +115,17 @@ class EvaluateConfig
         if(!sender.hasPermission("evaluate.use"))
             return "You don't have permissions to evaluate. Ask the server administrators to give you the evaluate.use permission.";
 
-        if(whitelists_player_enabled && sender instanceof Player)
+        if(security_player_enabled && sender instanceof Player)
         {
             Player player = (Player) sender;
-            if(!whitelists_player_players.contains(player.getUniqueId()))
+            if(!security_player_players.contains(player.getUniqueId()))
                 return "Your UUID is not allowed to evaluate. Ask the server administrators to whitelist evaluation for your UUID";
         }
 
-        if(whitelists_ip_enabled && sender instanceof Player)
+        if(security_ip_enabled && sender instanceof Player)
         {
             IPAddressString address = new IPAddressString(((Player) sender).getAddress().getAddress().getHostAddress());
-            if(whitelists_ip_ips.stream().noneMatch(x -> x.contains(address)))
+            if(security_ip_ips.stream().noneMatch(x -> x.contains(address)))
                 return "Your IP Address is not allowed to evaluate. Ask the server administrators to whitelist evaluation for your IP Address.";
         }
 

@@ -23,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.openjdk.nashorn.api.scripting.ClassFilter;
 import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import javax.script.ScriptEngine;
@@ -34,11 +35,14 @@ class ScriptEngineCache implements Listener
 {
     private final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final JavaPlugin plugin;
+    private final ClassFilter filter;
     private final ConcurrentMap<CommandSender, SenderCache> cache = new ConcurrentHashMap<>();
 
-    public ScriptEngineCache(JavaPlugin plugin)
+
+    public ScriptEngineCache(JavaPlugin plugin, ClassFilter filter)
     {
         this.plugin = plugin;
+        this.filter = filter;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -49,7 +53,7 @@ class ScriptEngineCache implements Listener
 
     private SenderCache setupSenderCache(CommandSender sender)
     {
-        ScriptEngine result = factory.getScriptEngine();
+        ScriptEngine result = factory.getScriptEngine(filter);
         result.put("plugin", plugin);
         result.put("server", plugin.getServer());
         result.put("sender", sender);
