@@ -17,6 +17,8 @@
 
 package io.github.michailik.evaluate;
 
+import io.github.michailik.evaluate.commands.AsyncEvaluateCommand;
+import io.github.michailik.evaluate.commands.EvaluateCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Evaluate extends JavaPlugin

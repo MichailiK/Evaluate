@@ -15,8 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.michailik.evaluate;
+package io.github.michailik.evaluate.commands;
 
+import io.github.michailik.evaluate.EvaluateConfig;
+import io.github.michailik.evaluate.ScriptEngineCache;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

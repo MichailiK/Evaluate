@@ -15,31 +15,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package io.github.michailik.evaluate;
+package io.github.michailik.evaluate.commands;
 
+import io.github.michailik.evaluate.EvaluateConfig;
+import io.github.michailik.evaluate.ScriptEngineCache;
 import org.bukkit.command.CommandSender;
-
 import java.util.function.Consumer;
 
-public class AsyncEvaluateCommand extends BaseEvaluateCommand
+public class EvaluateCommand extends BaseEvaluateCommand
 {
+    public EvaluateCommand(ScriptEngineCache cache, EvaluateConfig config)
+    {
+        super(cache, config);
+    }
+
     @Override
     protected void eval(CommandSender sender, ScriptEngineCache.SenderCache cache, String content, Consumer<Object> callback)
     {
-        new Thread(() -> {
-            try
-            {
-                callback.accept(cache.eval(content));
-            }
-            catch(Exception e)
-            {
-                callback.accept(e);
-            }
-        }).start();
-    }
-
-    public AsyncEvaluateCommand(ScriptEngineCache cache, EvaluateConfig config)
-    {
-        super(cache, config);
+        try
+        {
+            callback.accept(cache.eval(content));
+        }
+        catch(Exception e)
+        {
+            callback.accept(e);
+        }
     }
 }

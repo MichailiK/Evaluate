@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
-class ScriptEngineCache implements Listener
+public class ScriptEngineCache implements Listener
 {
     private final NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final JavaPlugin plugin;

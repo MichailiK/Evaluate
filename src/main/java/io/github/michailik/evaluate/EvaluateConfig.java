@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-class EvaluateConfig
+public class EvaluateConfig
 {
     public final boolean enabled;
 
