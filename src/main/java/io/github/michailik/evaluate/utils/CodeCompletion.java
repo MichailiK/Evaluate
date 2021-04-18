@@ -39,21 +39,39 @@ public final class CodeCompletion
     //   - Group 2: ()
     private static final Pattern pattern = Pattern.compile(" *([^.;()\\[\\] ]+) *(\\([^.;]*\\)|\\[[0-9]+])? *\\.?");
 
+    // Group 1 = Entire declaration
+    // Group 2 = Name/Identifier
+    // Group 3 = Value (code)
+    //
+    // Example: let world = player.getWorld();
+    // Match 1:
+    //   - Group 1: let world =
+    //   - Group 2: world
+    //   - Group 3: player.getWorld();
+    public static final Pattern varPattern = Pattern.compile("^((?:(?:var|let|const)\\s*)?([^.,:;!?\\s]+)\\s*=\\s*)(.*)");
+
     public static List<String> autoComplete(String input, ScriptEngine engine)
     {
-
-        Matcher matcher = pattern.matcher(input);
-        Class<?> currentClass = null;
         StringBuilder snippet = new StringBuilder();
 
+        Matcher varMatcher = varPattern.matcher(input);
+        if(varMatcher.matches())
+        {
+            snippet.append(varMatcher.group(1));
+            input = varMatcher.group(3);
+        }
 
-        if(!matcher.find() || matcher.hitEnd())
-            return new ArrayList<>(engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet());
-        else if(matcher.group(1) != null)
+        Matcher codeMatcher = pattern.matcher(input);
+        Class<?> currentClass = null;
+
+
+        if(!codeMatcher.find() || codeMatcher.hitEnd())
+            return engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet().stream().map(s -> snippet+s).collect(Collectors.toList());
+        else if(codeMatcher.group(1) != null)
         {
             Optional<Map.Entry<String, Object>> bind = engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()
                     .stream()
-                    .filter(x -> x.getKey().equals(matcher.group(1)))
+                    .filter(x -> x.getKey().equals(codeMatcher.group(1)))
                     .findFirst();
 
             if(bind.isEmpty())
@@ -69,9 +87,9 @@ public final class CodeCompletion
 
         while(true)
         {
-            snippet.append(matcher.group());
+            snippet.append(codeMatcher.group());
 
-            if(!matcher.find() || matcher.hitEnd())
+            if(!codeMatcher.find() || codeMatcher.hitEnd())
             {
                 if(currentClass == null)
                     return Collections.emptyList();
@@ -80,7 +98,7 @@ public final class CodeCompletion
                 String query = null;
                 try
                 {
-                    query = matcher.group(1);
+                    query = codeMatcher.group(1);
                 }
                 catch(Exception ignored)
                 {
@@ -99,19 +117,19 @@ public final class CodeCompletion
                 return result;
             }
 
-            String name = matcher.group(1);
-            String args = matcher.group(2);
+            String name = codeMatcher.group(1);
+            String args = codeMatcher.group(2);
 
             try
             {
                 if (currentClass == null || currentClass.equals(Void.TYPE))
                     return Collections.emptyList();
 
-                if (matcher.group(2) == null)
+                if (codeMatcher.group(2) == null)
                     currentClass = currentClass.getField(name).getType();
-                else if (matcher.group(2).startsWith("("))
+                else if (codeMatcher.group(2).startsWith("("))
                     currentClass = Arrays.stream(currentClass.getMethods()).filter(x -> x.getName().equals(name)).findFirst().orElseThrow().getReturnType();
-                else if (matcher.group(2).startsWith("["))
+                else if (codeMatcher.group(2).startsWith("["))
                     currentClass = currentClass.getField(name).getType().getComponentType();
                 else
                     throw new Exception("This should never happen");

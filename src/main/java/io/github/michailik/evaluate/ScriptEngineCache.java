@@ -17,6 +17,7 @@
 
 package io.github.michailik.evaluate;
 
+import io.github.michailik.evaluate.utils.CodeCompletion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,6 +30,7 @@ import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import javax.script.ScriptEngine;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ScriptEngineCache implements Listener
@@ -98,10 +100,23 @@ public class ScriptEngineCache implements Listener
             engine.put("lastresult", lastResult);
             engine.put("lastexception", lastException);
 
+            String varName = null;
+
+            Matcher varMatcher = CodeCompletion.varPattern.matcher(content);
+            if(varMatcher.matches())
+            {
+                varName = varMatcher.group(2);
+                content = varMatcher.group(3);
+            }
+
             try
             {
                 Object result = engine.eval(content);
                 lastResult = result;
+
+                if(varName != null)
+                    engine.put(varName, result);
+
                 return result;
             }
             catch(Exception e)
