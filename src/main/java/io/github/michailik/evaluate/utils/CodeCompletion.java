@@ -48,7 +48,7 @@ public final class CodeCompletion
     //   - Group 1: let world =
     //   - Group 2: world
     //   - Group 3: player.getWorld();
-    public static final Pattern varPattern = Pattern.compile("^((?:(?:var|let|const)\\s*)?([^.,:;!?\\s]+)\\s*=\\s*)(.*)");
+    public static final Pattern varPattern = Pattern.compile("^((?:(?:var|let|const) +)?([^.,:;!? ]+) *= *)(.*)");
 
     public static List<String> autoComplete(String input, ScriptEngine engine)
     {
@@ -56,17 +56,13 @@ public final class CodeCompletion
 
         Matcher varMatcher = varPattern.matcher(input);
         if(varMatcher.matches())
-        {
-            snippet.append(varMatcher.group(1));
             input = varMatcher.group(3);
-        }
 
         Matcher codeMatcher = pattern.matcher(input);
         Class<?> currentClass = null;
 
-
         if(!codeMatcher.find() || codeMatcher.hitEnd())
-            return engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet().stream().map(s -> snippet+s).collect(Collectors.toList());
+            return new ArrayList<>(engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet());
         else if(codeMatcher.group(1) != null)
         {
             Optional<Map.Entry<String, Object>> bind = engine.getBindings(ScriptContext.ENGINE_SCOPE).entrySet()
@@ -95,31 +91,77 @@ public final class CodeCompletion
                     return Collections.emptyList();
 
                 ArrayList<String> result = new ArrayList<>();
-                String query = null;
+
+                // Identifier query, to remove all fields/methods from list that don't start with the user's input
+                // For example, "player.getW" would remove all fields & methods that don't start with "getW"
+                String identifierQuery = null;
                 try
                 {
-                    query = codeMatcher.group(1);
+                    identifierQuery = codeMatcher.group(1);
                 }
                 catch(Exception ignored)
                 {
                 }
+                boolean noIdQuery = identifierQuery == null || identifierQuery.isEmpty();
 
-                String finalQuery = query;
+                // Because Minecraft's tab completion treats spaces as new arguments, trailing spaces must be removed
+                // so the entire snippet doesn't get re-inserted when the user tab completes.
+                String tabFriendlySnippet = snippet.toString();
+
+                // Scenario 1: Spaces in the identifier query
+                // Example: player.getWorld(). strikeLight
+                // (Spaces after the dot in getWorld)
+                // Because spaces are not part of any group, we need to check the entire match (Group 0) if it begins
+                // with a space
+                if(getMatcherGroupSafely(codeMatcher) != null && codeMatcher.group(0).startsWith(" "))
+                {
+                    tabFriendlySnippet = "";
+                }
+                // Scenario 2: Spaces in the empty identifier query
+                // Example: player.getWorld().
+                // (Trailing spaces in the end)
+                if(input.endsWith(" "))
+                {
+                    tabFriendlySnippet = "";
+                }
+                // Scenario 3: Spaces outside the identifier query
+                // player  . getWorld().strikeLight
+                // (Spaces somewhere earlier in the code)
+                // We just look for the last index of any spaces, simple as that.
+                // Note the "else if" here
+                else if(snippet.lastIndexOf(" ") != -1)
+                {
+                    tabFriendlySnippet = snippet.substring(snippet.lastIndexOf(" ")+1);
+                }
+
+                // Scenario 4: Trailing spaces after partial or complete identifier query
+                // Example: player .get
+                // (Trailing spaces in the end)
+                // After writing a complete identifier query & inserting a space, tab-completion appears which allows
+                // for re-insertion of code
+                if(getMatcherGroupSafely(codeMatcher) != null && codeMatcher.group(0).matches(".* +"))
+                {
+                     return Collections.emptyList();
+                }
+
+                // For use in lambda functions
+                String finalIdentifierQuery = identifierQuery;
+                String finalTabFriendlySnippet = tabFriendlySnippet;
 
                 result.addAll(Arrays.stream(currentClass.getFields())
-                        .filter(field -> (finalQuery == null || finalQuery.isEmpty()) || field.getName().startsWith(finalQuery))
-                        .map(field -> snippet+field.getName()).collect(Collectors.toList()));
+                        .filter(field -> noIdQuery || field.getName().startsWith(finalIdentifierQuery))
+                        .map(field -> finalTabFriendlySnippet +field.getName()).collect(Collectors.toList()));
 
                 result.addAll(Arrays.stream(currentClass.getMethods())
-                        .filter(method -> (finalQuery == null || finalQuery.isEmpty()) || method.getName().startsWith(finalQuery))
-                        .map(method -> snippet+getMethodName(method)).collect(Collectors.toList()));
+                        .filter(method -> noIdQuery || method.getName().startsWith(finalIdentifierQuery))
+                        .map(method -> finalTabFriendlySnippet+getMethodName(method)).collect(Collectors.toList()));
 
                 return result;
             }
 
-            String name = codeMatcher.group(1);
-            String args = codeMatcher.group(2);
 
+            String name = codeMatcher.group(1);
+            //String args = codeMatcher.group(2);
             try
             {
                 if (currentClass == null || currentClass.equals(Void.TYPE))
@@ -148,5 +190,17 @@ public final class CodeCompletion
                         .map(parameter -> parameter.getType().getSimpleName())
                         .collect(Collectors.joining(", "))
                 + ")";
+    }
+
+    private static String getMatcherGroupSafely(Matcher matcher)
+    {
+        try
+        {
+            return matcher.group();
+        }
+        catch(IllegalStateException e)
+        {
+            return null;
+        }
     }
 }

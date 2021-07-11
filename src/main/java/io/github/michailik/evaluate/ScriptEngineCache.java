@@ -60,17 +60,6 @@ public class ScriptEngineCache implements Listener
     private SenderCache setupSenderCache(CommandSender sender)
     {
         ScriptEngine result = factory.getScriptEngine(filter);
-        result.put("plugin", plugin);
-        result.put("server", plugin.getServer());
-        result.put("sender", sender);
-
-        // Common mistake players may make
-        if(sender instanceof Player)
-            result.put("player", sender);
-
-        result.put("lastresult", null);
-        result.put("lastexception", null);
-
         return new SenderCache(result, sender);
     }
 
@@ -93,30 +82,18 @@ public class ScriptEngineCache implements Listener
         {
             this.engine = engine;
             this.sender = sender;
+
+            setupBindings();
         }
 
         public Object eval(String content) throws Exception
         {
-            engine.put("lastresult", lastResult);
-            engine.put("lastexception", lastException);
-
-            String varName = null;
-
-            Matcher varMatcher = CodeCompletion.varPattern.matcher(content);
-            if(varMatcher.matches())
-            {
-                varName = varMatcher.group(2);
-                content = varMatcher.group(3);
-            }
-
             try
             {
                 Object result = engine.eval(content);
                 lastResult = result;
-
-                if(varName != null)
-                    engine.put(varName, result);
-
+                // In case the user decides to delete any of the included bindings
+                setupBindings();
                 return result;
             }
             catch(Exception e)
@@ -144,6 +121,19 @@ public class ScriptEngineCache implements Listener
         public CommandSender getSender()
         {
             return sender;
+        }
+
+        private void setupBindings()
+        {
+            engine.put("server", sender.getServer());
+            engine.put("sender", sender);
+
+            // Common mistake players may make
+            if(sender instanceof Player)
+                engine.put("player", sender);
+
+            engine.put("lastresult", lastResult);
+            engine.put("lastexception", lastException);
         }
     }
 }

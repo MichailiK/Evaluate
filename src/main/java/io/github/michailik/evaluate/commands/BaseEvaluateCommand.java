@@ -104,7 +104,11 @@ abstract class BaseEvaluateCommand implements CommandExecutor, TabCompleter
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
     {
         if(config.canEvaluate(sender) == null)
-            return CodeCompletion.autoComplete(String.join(" ", args), cache.getSenderCache(sender).getScriptEngine());
+        {
+            String content = String.join(" ", args);
+
+            return CodeCompletion.autoComplete(content, cache.getSenderCache(sender).getScriptEngine());
+        }
         return null;
     }
 }
