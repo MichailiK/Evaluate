@@ -6,15 +6,11 @@ Evaluate allows you to evaluate Nashorn script on a Minecraft Spigot server.
 
 ## Before you continue ...
 
-**Evaluate is currently in early development. Expect bugs or exploits.**
-
-**Evaluate requires Java 11 or above.**
-
-**This plugin allows arbitrary code execution. Although there are security features (such as whitelisting),
-it may still be dangerous having Evaluate active. This plugin is recommended to be run on a local server for tinkering
-with the Bukkit API.**
-
-**Evaluate authors are not to be held liable for any damages or harm caused by the use of Evaluate**
+- Evaluate requires Java 11 or above.
+- This plugin allows arbitrary code execution. Although there are security features (such as whitelisting),
+  it may still be dangerous having Evaluate active. We  recommended using the plugin on a local server for tinkering
+  with the Bukkit API.
+- Evaluate authors are not to be held liable for any damages or harm caused by the use of Evaluate
 
 ## Security
 
@@ -33,12 +29,11 @@ protect your server from malicious code:
 These features are currently available or planned:
 
 - [x] Evaluation of Nashorn code
-- [x] Return value of the last evaluation being exposed as `lastresult` & last exception as `lastexception` 
+- [x] Return value of the last evaluation, exposed as `lastresult` & last exception as `lastexception` 
   (for each CommandSender)
-- [x] Deny evaluation for Console or Command blocks
+- [x] User variables (`var variableName = expression`)
 - [x] Config reload
 - [x] Basic code completion
-- [ ] Easy access of JavaPlugin instances from other plugins
 
 ## Bindings
 

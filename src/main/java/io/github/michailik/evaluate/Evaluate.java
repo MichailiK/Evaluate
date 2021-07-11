@@ -45,7 +45,6 @@ public final class Evaluate extends JavaPlugin
         asyncEvaluateCommand = new AsyncEvaluateCommand(cache, config);
         evaluateReloadCommand = new EvaluateReloadCommand(this);
 
-
         getCommand("evaluate").setExecutor(evaluateCommand);
         getCommand("evaluateasynchronous").setExecutor(asyncEvaluateCommand);
         getCommand("evaluatereload").setExecutor(evaluateReloadCommand);
@@ -67,6 +66,17 @@ public final class Evaluate extends JavaPlugin
     @Override
     public void onDisable()
     {
-        // TODO
+        getCommand("evaluate").setExecutor(null);
+        getCommand("evaluateasynchronous").setExecutor(null);
+        getCommand("evaluatereload").setExecutor(null);
+
+        evaluateCommand = null;
+        asyncEvaluateCommand = null;
+        evaluateReloadCommand = null;
+
+        config = null;
+        filter = null;
+        cache = null;
+
     }
 }
